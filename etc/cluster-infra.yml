@@ -6,3 +6,48 @@
 # Cluster inventory configuration. Edit these.
 #cluster_roles:
 #cluster_group_vars:
+
+# This name is used for the Heat stack and as a prefix for the
+# cluster node hostnames.
+
+cluster_name: wills-cluster
+
+cluster_params:
+  cluster_prefix: wills-cluster
+
+  # This parameter should be set to the name of an RSA keypair you have
+  # uplaoded to OpenStack.
+  cluster_keypair: ilab_sclt100
+
+  # Site-specific network configuration.
+  cluster_net:
+    - { net: "ilab", subnet: "ilab" }
+
+  # Multi-node application topology.  In this case we have a SLURM
+  # deployment formed from a login/controller node and a number of
+  # batch compute nodes.
+  cluster_groups:
+    - "{{ compute_A }}"
+
+compute_A:
+  name: "compute-A"
+  flavor: "compute-A"
+  image: "CentOS7"
+  user: "centos"
+  num_nodes: 1
+
+# Node group assignments for cluster roles.
+# These group assignments are appended to the cluster inventory file.
+# The names of these roles are cross-referenced to groups referred to
+# in playbooks in the ansible/ directory.
+cluster_roles:
+  - name: "Dell_R630"
+    groups: [ "{{ compute_A }}" ]
+
+cluster_group_vars:
+  cluster:
+    ansible_user: centos
+  cluster_Dell_R630:
+    example_var: "{{ example_var_default }}"
+
+example_var_default: "hello world"
